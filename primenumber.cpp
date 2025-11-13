@@ -203,7 +203,7 @@ std::vector<uint32_t> PrimeNumer::mul_barrett(std::vector<uint32_t>&a,std::vecto
 //求两个大数乘
 std::vector<uint32_t> PrimeNumer::karatsuba(std::vector<uint32_t>&a,std::vector<uint32_t>&b,std::vector<uint32_t>&mod,std::vector<uint32_t>&mu){
     int n=std::max(a.size(),b.size());
-    if(n<=12) return mul(a,b,mod,mu);
+    if(n<=20) return mul(a,b,mod,mu);
     barrett_mod(a,mod,mu);
     barrett_mod(b,mod,mu);
     std::vector<uint32_t>rsu;
