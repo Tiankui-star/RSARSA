@@ -80,7 +80,7 @@ bool PrimeNumer::miller_rabin(){
 
         }
     }
-     return true;
+    return true;
 
 
 }
@@ -112,7 +112,7 @@ int PrimeNumer::compare(std::vector<uint32_t>&a,std::vector<uint32_t>&mod){
     }
     return 0;
 }
-std::vector<uint32_t> PrimeNumer::sub(std::vector<uint32_t>&a,std::vector<uint32_t>&b){
+std::vector<uint32_t> PrimeNumer::sub(const std::vector<uint32_t>&a,const std::vector<uint32_t>&b){
     uint64_t tmp;
     uint32_t bor=0;
     int n=std::max(a.size(),b.size());
@@ -229,3 +229,106 @@ std::vector<uint32_t> PrimeNumer::add(std::vector<uint32_t>&a,std::vector<uint32
 //     }
 //     return true;
 // }
+std::vector<uint32_t> PrimeNumer::compute_mu(std::vector<uint32_t>& mod){ //巴雷特模乘
+    // call knuth division on b^(2k) by mod
+    int k = (int)mod.size();
+    std::vector<uint32_t> b2k(2 * k + 1, 0);
+    b2k[2 * k] = 1; // b^(2k)
+    if (b2k.size() > 10000) {
+        std::cerr << "Mul overflow compumu: a=" << b2k.size()<< std::endl;
+        exit(1);
+    }
+    auto qr = div_mod_knuth(b2k, mod); //   returns {quotient, remainder} // qr.first is mu
+    std::vector<uint32_t> mu(qr.first.begin(), qr.first.end());
+    return mu;
+}
+std::pair<std::vector<uint32_t>, std::vector<uint32_t>> PrimeNumer::div_mod_knuth(const std::vector<uint32_t>& a_in, const std::vector<uint32_t>& b_in) {
+
+    std::vector<uint32_t> a = a_in;
+    std::vector<uint32_t> b = b_in;
+    trim(a); trim(b);
+    if (b.size() == 1) {
+
+    // short division by single limb
+        uint64_t rem = 0;
+    std::vector<uint32_t> q(a.size(), 0);
+    for (size_t i = a.size(); i-- > 0;) {
+        unsigned __int128 cur = ((unsigned __int128)rem << 32) | a[i];
+        q[i] = (uint32_t)(cur / b[0]);
+        rem = (uint64_t)(cur % b[0]);
+    }
+    trim(q);
+    return {q, std::vector<uint32_t>{(uint32_t)rem}}; }
+    if (compare(a, b) < 0)
+        return { std::vector<uint32_t>{0}, a };
+    size_t n = b.size();
+    size_t m = a.size() - n; // normalization: shift so b.back() high bit set
+    unsigned shift = 0; uint32_t bn = b.back();
+    while ((bn << shift & 0x80000000u) == 0)
+        ++shift;
+    std::vector<uint32_t> b_norm = lshift_bits(b, shift);
+    std::vector<uint32_t> a_norm = lshift_bits(a, shift);
+    if (a_norm.size() == a.size()) a_norm.push_back(0);
+    if (a_norm.size() < n + m + 1) a_norm.resize(n + m + 1, 0);
+    std::vector<uint32_t> q(m + 1, 0);
+    for (size_t j = m + 1; j-- > 0;) {
+
+    // estimate qhat
+        unsigned __int128 num = ((unsigned __int128)a_norm[j + n] << 32) | a_norm[j + n - 1];
+    unsigned __int128 den = b_norm[n - 1];
+        unsigned __int128 qhat = num / den;
+    if (qhat > 0xFFFFFFFFu) qhat = 0xFFFFFFFFu;
+    // adjust qhat
+    while (true) {
+
+        unsigned __int128 left = qhat * (unsigned __int128)b_norm[n - 2];
+        unsigned __int128 remhat = num - qhat * den;
+        unsigned __int128 right = (remhat << 32) + a_norm[j + n - 2];
+        if (left <= right) break;
+        --qhat;
+    }
+    // multiply-subtract  qhat * b_norm from a_norm at offset j
+    unsigned __int128 borrow = 0;
+    for (size_t i = 0; i < n; ++i) {
+        unsigned __int128 prod = qhat * (unsigned __int128)b_norm[i];
+        unsigned __int128 sub = (unsigned __int128)a_norm[j + i] - (prod & 0xFFFFFFFFu) - borrow;
+        a_norm[j + i] = (uint32_t)sub; borrow = (prod >> 32) + ((sub >> 32) & 1);
+    }
+    unsigned __int128 sub_last = (unsigned __int128)a_norm[j + n] - borrow; a_norm[j + n] = (uint32_t)sub_last;
+    bool negative = ((sub_last >> 63) & 1);
+    if (negative) { // add back b_norm
+        --qhat;
+        uint64_t carry = 0;
+        for (size_t i = 0; i < n; ++i) {
+            unsigned __int128 sum = (unsigned __int128)a_norm[j + i] + b_norm[i] + carry;
+            a_norm[j + i] = (uint32_t)sum;
+            carry = (uint64_t)(sum >> 32);
+        }
+        a_norm[j + n] = (uint32_t)((unsigned __int128)a_norm[j + n] + carry);
+    }
+    q[j] = (uint32_t)qhat;
+    }
+    std::vector<uint32_t> r(a_norm.begin(), a_norm.begin() + n);
+    if (shift) rshift_bits_inplace(r, shift);
+    trim(q); trim(r);
+    return {q, r};
+}
+std::vector<uint32_t> PrimeNumer::lshift_bits(const std::vector<uint32_t>& v, unsigned s) {
+    if (s == 0) return v;
+    std::vector<uint32_t> out(v.size() + 1, 0);
+    uint64_t carry = 0;
+    for (size_t i = 0; i < v.size(); ++i) {
+        uint64_t cur = ((uint64_t)v[i] << s) | carry;
+        out[i] = (uint64_t)cur; carry = cur >> 32;
+    }
+    out[v.size()] = (uint32_t)carry; trim(out); return out;
+}
+void PrimeNumer::rshift_bits_inplace(std::vector<uint32_t>& v, unsigned s) {
+    if (s == 0) return;
+    uint64_t carry = 0;
+    for (size_t i = v.size(); i-- > 0;) {
+        unsigned __int128 cur = ((unsigned __int128)carry << 32) | v[i]; v[i] = (uint64_t)(cur >> s);
+        carry = (uint64_t)(cur & (((unsigned __int128)1 << s) - 1));
+    }
+    trim(v);
+}
