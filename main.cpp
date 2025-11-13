@@ -9,10 +9,10 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
      PrimeNumer prime;
     std::vector<uint32_t>t1={2};
-    std::vector<uint32_t>t2={7,95};
-    std::vector<uint32_t>t3={1000001};
-     std::vector<uint32_t>mu=prime.compute_mu(t3);
-     std::vector<uint32_t> res = prime.quickExp(t1, t2, t3);
+    std::vector<uint32_t>t2={227,95,42,222,56,241,36,4};
+    std::vector<uint32_t>t3={1000001,122,22,26,2,15,33};
+    std::vector<uint32_t>mu=prime.compute_mu(t3);
+     std::vector<uint32_t> res = prime.quickExp(t1, t2, t3,mu);
     for (uint32_t &x : res)
         std::cout << x << ' ';
     // if(prime.miller_rabin()){

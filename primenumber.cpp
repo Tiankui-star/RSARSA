@@ -84,7 +84,7 @@ bool PrimeNumer::miller_rabin(){
 
 
 }
-std::vector<uint32_t> PrimeNumer::quickExp(std::vector<uint32_t> base ,std::vector<uint32_t>&exp,std::vector<uint32_t>&mod1){
+std::vector<uint32_t> PrimeNumer::quickExp(std::vector<uint32_t> base ,std::vector<uint32_t>&exp,std::vector<uint32_t>&mod1,std::vector<uint32_t>&mu){
     std::vector<uint32_t>rsu={1};
     std::vector<uint32_t>d=exp;
     while(!(d.size()==1&&d[0]==0)){
@@ -92,11 +92,11 @@ std::vector<uint32_t> PrimeNumer::quickExp(std::vector<uint32_t> base ,std::vect
         if((d[0]&1)==1){
             rsu=karatsuba(rsu,base);
 
-            mod(rsu,mod1);
+            barrett_mod(rsu,mod1,mu);
         }
         div(d);
         base=karatsuba(base,base);
-        mod(base,mod1);
+        barrett_mod(base,mod1,mu);
     }
     return rsu;
 
@@ -209,6 +209,37 @@ void PrimeNumer::karatsuba_add(std::vector<uint32_t>&rsu,std::vector<uint32_t>&a
             rsu.push_back(0);
         }
     }
+}
+void PrimeNumer::barrett_mod(std::vector<uint32_t>& a, std::vector<uint32_t>& mod, std::vector<uint32_t> & mu){
+
+    trim(a);
+    int k = (int)mod.size();
+    if (a.size() < (size_t)k) return;
+    // q1 = floor(a / b^(k-1)) => high words starting at index k-1
+    std::vector<uint32_t> q1;
+    if (a.size() > (size_t)(k - 1))
+        q1 = std::vector<uint32_t>(a.begin() + (k - 1), a.end());
+    else q1 = {0};
+    // q2 = q1 * mu
+    std::vector<uint32_t> q2 = mul(q1, mu);
+    // q3 = floor(q2 / b^(k+1)) => take high words starting at index k+1
+    std::vector<uint32_t> q3;
+    if (q2.size() > (size_t)(k + 1))
+        q3 = std::vector<uint32_t>(q2.begin() + (k + 1), q2.end());
+    else q3 = {0};
+    // r = a - q3 * mod
+    std::vector<uint32_t> q3m = mul(q3, mod);
+    std::vector<uint32_t> r;
+    if (compare(a, q3m) >= 0) r = sub(a, q3m);
+    else {
+        // r = a + t where t = mod * ceil((q3m - a) / mod) - q3m; simpler: add mod until >= q3m then subtract r = a;
+        while (compare(r, q3m) < 0) r = add(r, mod);
+        // add_big 使用者已有 add; 下面给实现调用者可替换为 existing add
+        r = sub(r, q3m);
+    } while (compare(r, mod) >= 0) r = sub(r, mod);
+    // write back
+    a.assign(r.begin(), r.end());
+    trim(a);
 }
 std::vector<uint32_t> PrimeNumer::add(std::vector<uint32_t>&a,std::vector<uint32_t>&b){
     std::vector<uint32_t>res;
