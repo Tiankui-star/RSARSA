@@ -23,8 +23,9 @@ public:
     std::vector<uint32_t> sub(const std::vector<uint32_t>&a,const std::vector<uint32_t>&mod);
     void mod(std::vector<uint32_t>&a,std::vector<uint32_t>&mod);
     void mul_mod(std::vector<uint32_t>&rsu,std::vector<uint32_t>&base,std::vector<uint32_t>&mod);
-    std::vector<uint32_t> mul(std::vector<uint32_t>&a,std::vector<uint32_t>&b);
-    std::vector<uint32_t> karatsuba(std::vector<uint32_t>&a,std::vector<uint32_t>&b);
+    std::vector<uint32_t> mul(std::vector<uint32_t>&a,std::vector<uint32_t>&b,std::vector<uint32_t>&mod,std::vector<uint32_t>&mu);
+    std::vector<uint32_t> mul_barrett(std::vector<uint32_t>&a,std::vector<uint32_t>&b);
+    std::vector<uint32_t> karatsuba(std::vector<uint32_t>&a,std::vector<uint32_t>&b,std::vector<uint32_t>&mod,std::vector<uint32_t>&mu);
     std::vector<uint32_t> add(std::vector<uint32_t>&a,std::vector<uint32_t>&b);
     void karatsuba_add(std::vector<uint32_t>&rsu,std::vector<uint32_t>&a,int offset);
     std::vector<uint32_t> compute_mu( std::vector<uint32_t>& mod);

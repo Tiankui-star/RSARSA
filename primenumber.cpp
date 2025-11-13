@@ -90,12 +90,12 @@ std::vector<uint32_t> PrimeNumer::quickExp(std::vector<uint32_t> base ,std::vect
     while(!(d.size()==1&&d[0]==0)){
 
         if((d[0]&1)==1){
-            rsu=karatsuba(rsu,base);
+            rsu=karatsuba(rsu,base,mod1,mu);
 
             barrett_mod(rsu,mod1,mu);
         }
         div(d);
-        base=karatsuba(base,base);
+        base=karatsuba(base,base,mod1,mu);
         barrett_mod(base,mod1,mu);
     }
     return rsu;
@@ -151,7 +151,9 @@ void PrimeNumer::mod(std::vector<uint32_t>&a,std::vector<uint32_t>&mod1){
 void mul_mod(std::vector<uint32_t>&rsu,std::vector<uint32_t>&base,std::vector<uint32_t>&mod){
 
 }
-std::vector<uint32_t> PrimeNumer::mul(std::vector<uint32_t>&a,std::vector<uint32_t>&b){
+std::vector<uint32_t> PrimeNumer::mul(std::vector<uint32_t>&a,std::vector<uint32_t>&b,std::vector<uint32_t>&mod,std::vector<uint32_t>&mu){
+    barrett_mod(a,mod,mu);
+    barrett_mod(b,mod,mu);
     std::vector<uint32_t>res(a.size()+b.size());
     for(int i=0;i<a.size();i++){
         uint32_t jin=0;
@@ -169,26 +171,57 @@ std::vector<uint32_t> PrimeNumer::mul(std::vector<uint32_t>&a,std::vector<uint32
             k++;
         }
     }
+    barrett_mod(res,mod,mu);
+    while(res.size()>0&&res.back()==0) res.pop_back();
+    return res;
+
+}
+std::vector<uint32_t> PrimeNumer::mul_barrett(std::vector<uint32_t>&a,std::vector<uint32_t>&b){
+
+    std::vector<uint32_t>res(a.size()+b.size());
+    for(int i=0;i<a.size();i++){
+        uint32_t jin=0;
+        for(int j=0;j<b.size();j++){
+            uint64_t t=res[i+j]+((uint64_t)a[i])*b[j]+jin;
+            res[i+j]=(uint32_t)t;
+            jin=t>>32;
+        }
+        int k=i+b.size();
+        while(jin>0){
+            uint64_t t=res[k]+jin;
+
+            res[k]=(uint32_t)t;
+            jin=t>>32;
+            k++;
+        }
+    }
+
     while(res.size()>0&&res.back()==0) res.pop_back();
     return res;
 
 }
 //求两个大数乘
-std::vector<uint32_t> PrimeNumer::karatsuba(std::vector<uint32_t>&a,std::vector<uint32_t>&b){
+std::vector<uint32_t> PrimeNumer::karatsuba(std::vector<uint32_t>&a,std::vector<uint32_t>&b,std::vector<uint32_t>&mod,std::vector<uint32_t>&mu){
     int n=std::max(a.size(),b.size());
-    if(n<=32) return mul(a,b);
+    if(n<=12) return mul(a,b,mod,mu);
+    barrett_mod(a,mod,mu);
+    barrett_mod(b,mod,mu);
     std::vector<uint32_t>rsu;
     std::vector<uint32_t>res;
     int mid=n/2;
+    // std::vector<uint32_t> a0(a.begin(), a.begin() + std::min(mid, (int)a.size()));
+    // std::vector<uint32_t> a1(a.size() > mid ? std::vector<uint32_t>(a.begin() + mid, a.end()) : std::vector<uint32_t>{});
+    // std::vector<uint32_t> b0(b.begin(), b.begin() + std::min(mid, (int)b.size()));
+    // std::vector<uint32_t> b1(b.size() > mid ? std::vector<uint32_t>(b.begin() + mid, b.end()) : std::vector<uint32_t>{});
     std::vector<uint32_t>a0(a.begin(),a.begin()+mid);
     std::vector<uint32_t>a1(a.begin()+mid,a.end());
     std::vector<uint32_t>b0(b.begin(),b.begin()+mid);
     std::vector<uint32_t>b1(b.begin()+mid,b.end());
-    std::vector<uint32_t>r1=karatsuba(a0,b0); //ac
-    std::vector<uint32_t>r2=karatsuba(a1,b1); //bd
+    std::vector<uint32_t>r1=karatsuba(a0,b0,mod,mu); //ac
+    std::vector<uint32_t>r2=karatsuba(a1,b1,mod,mu); //bd
     std::vector<uint32_t>adda=add(a0,a1);
     std::vector<uint32_t>addb=add(b0,b1);
-    std::vector<uint32_t>t=karatsuba(adda,addb); //ac+ad+bc+bd
+    std::vector<uint32_t>t=karatsuba(adda,addb,mod,mu); //ac+ad+bc+bd
     std::vector<uint32_t>t1=sub(t,r1);
     std::vector<uint32_t>r3=sub(t1,r2); //ad+bc
     karatsuba_add(rsu,r1,0);
@@ -221,14 +254,14 @@ void PrimeNumer::barrett_mod(std::vector<uint32_t>& a, std::vector<uint32_t>& mo
         q1 = std::vector<uint32_t>(a.begin() + (k - 1), a.end());
     else q1 = {0};
     // q2 = q1 * mu
-    std::vector<uint32_t> q2 = mul(q1, mu);
+    std::vector<uint32_t> q2 = mul_barrett(q1, mu);
     // q3 = floor(q2 / b^(k+1)) => take high words starting at index k+1
     std::vector<uint32_t> q3;
     if (q2.size() > (size_t)(k + 1))
         q3 = std::vector<uint32_t>(q2.begin() + (k + 1), q2.end());
     else q3 = {0};
     // r = a - q3 * mod
-    std::vector<uint32_t> q3m = mul(q3, mod);
+    std::vector<uint32_t> q3m = mul_barrett(q3, mod);
     std::vector<uint32_t> r;
     if (compare(a, q3m) >= 0) r = sub(a, q3m);
     else {
@@ -260,7 +293,7 @@ std::vector<uint32_t> PrimeNumer::add(std::vector<uint32_t>&a,std::vector<uint32
 //     }
 //     return true;
 // }
-std::vector<uint32_t> PrimeNumer::compute_mu(std::vector<uint32_t>& mod){ //巴雷特模乘
+std::vector<uint32_t> PrimeNumer::compute_mu(std::vector<uint32_t>& mod){
     // call knuth division on b^(2k) by mod
     int k = (int)mod.size();
     std::vector<uint32_t> b2k(2 * k + 1, 0);
@@ -323,10 +356,13 @@ std::pair<std::vector<uint32_t>, std::vector<uint32_t>> PrimeNumer::div_mod_knut
     for (size_t i = 0; i < n; ++i) {
         unsigned __int128 prod = qhat * (unsigned __int128)b_norm[i];
         unsigned __int128 sub = (unsigned __int128)a_norm[j + i] - (prod & 0xFFFFFFFFu) - borrow;
+
         a_norm[j + i] = (uint32_t)sub; borrow = (prod >> 32) + ((sub >> 32) & 1);
     }
+
     unsigned __int128 sub_last = (unsigned __int128)a_norm[j + n] - borrow; a_norm[j + n] = (uint32_t)sub_last;
     bool negative = ((sub_last >> 63) & 1);
+
     if (negative) { // add back b_norm
         --qhat;
         uint64_t carry = 0;
