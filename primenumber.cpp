@@ -8,16 +8,18 @@
 #include<algorithm>
 #include <QTranslator>
 PrimeNumer::PrimeNumer() {
-    prime1.resize(32);
+    prime1.resize(16);
     prime2.resize(32);
+    two.push_back(2);
 }
 void PrimeNumer::generateOdd() {
     std::random_device rd;
     std::mt19937 gen(rd());
     std::uniform_int_distribution<> dist(0, UINT32_MAX);
     std::uniform_int_distribution<> dist1(pow(2,31), UINT32_MAX);
-    for(int i=0;i<31;i++) prime1[i]=dist(gen);
-    prime1[31]=dist1(gen);
+    for(int i=0;i<15;i++) prime1[i]=dist(gen);
+    prime1[15]=dist1(gen);
+    prime1[0] |= 1;
     // std::ofstream outf;
     // outf.open("fixprime.txt");
     // int cnt=0;
@@ -49,6 +51,7 @@ std::vector<uint32_t> PrimeNumer::findD(int &s){
             t=0;
         }
     }
+    n_1=d;
     while(d.size()>0&&d.back()==0) d.pop_back();
     while((d[0]&1)==0){
         div(d);
@@ -68,18 +71,50 @@ void PrimeNumer::div(std::vector<uint32_t>&v){
     ensure_nonempty_zero(v);
 }
 bool PrimeNumer::miller_rabin(){
-    /***test***/
-    // generatePrime();
-    // for(int i=0;i<fixprime.size();i++) std::cout<<fixprime[i]<<' ';
-    /*******/
-    while(true){
+    int tries = 0;
+
+    while(true) {
         generateOdd();
         int s=0;
         std::vector<uint32_t>d=findD(s);
-        for(int i=0;i<fixprime.size();i++){
+        //std::cout<<"d"<<d[0]<<std::endl;
+        bool isprime = true;
+        std::vector<uint32_t> mu = compute_mu(prime1);
+        for(size_t i = 0; i < 40; i++) {
+            std::vector<uint32_t>a={fixprime[i]};
+            std::vector<uint32_t>x=quickExp(a, d, prime1, mu);
+            // for(auto t:x) std::cout<<t<<' ';
+            // std::cout<<std::endl;
+            if(x==std::vector<uint32_t>{1}||x==n_1) continue;
+            bool passed = false;
+            for(int r=0;r<s;r++){
+                x=karatsuba(x,x);
+                barrett_mod(x,prime1,mu);
+                if(x==n_1) {
+                    passed = true;
+                    break;
+                }
+                if(x == std::vector<uint32_t>{1}) {
+                    isprime=false;
+                    break;
+                }
+                // for(auto t:x) std::cout<<t<<' ';
+                // std::cout<<std::endl<<std::endl;
+            }
 
+            if(!passed) {
+                isprime=false;
+                break;
+            }
         }
+        tries++;
+        if(isprime) {
+            std::cout << "Found prime after " << tries << " tries." << std::endl;
+            break;
+        }
+        //prime1=add(prime1,two);
     }
+
     return true;
 
 
@@ -109,7 +144,8 @@ int PrimeNumer::compare(std::vector<uint32_t>&a,std::vector<uint32_t>&mod){
     while(j>1&&a[j-1]==0) --j;
     if(i<j) return -1;
     if(i>j) return 1;
-    for(int k=i;k>0;k--){
+    for(int k=i-1;k>=0;k--){
+        //std::cout<<"k"<<a[k]<<std::endl;
         if(a[k]<mod[k]) return -1;
         if(a[k]>mod[k]) return 1;
     }
@@ -244,7 +280,7 @@ std::vector<uint32_t> PrimeNumer::karatsuba_rec(const uint32_t *a, int an, const
     while (bn > 1 && b[bn-1] == 0) --bn;
     if (an == 0 || bn == 0) return std::vector<uint32_t>{0};
     size_t n = std::max(an, bn);
-    if(n<=64){
+    if(n<=32){
         std::vector<uint32_t> va(a, a + an);
         std::vector<uint32_t> vb(b, b + bn);
         return mul(va, vb);

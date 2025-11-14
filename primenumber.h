@@ -9,7 +9,7 @@ private:
     std::vector<uint32_t> prime2;
     std::vector<uint32_t>fixprime;
     std::vector<uint32_t>n_1;
-    std::vector<uint32_t>yu;
+    std::vector<uint32_t>two;
 public:
     PrimeNumer();
     void generateOdd();
