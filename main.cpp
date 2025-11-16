@@ -24,9 +24,10 @@ int main(int argc, char *argv[])
       olfunct test(prime);
       // for(auto t:test.mu) std::cout<<t<<',';
       // std::cout<<std::endl;
-      // for(auto t:test.olfunction) std::cout<<t<<',';
+      for(auto t:test.olfunction) std::cout<<t<<',';
+      std::cout<<std::endl;
       test.solve();
-      for(auto t:test.d) std::cout<<t<<' ';
+      for(auto t:test.d) std::cout<<t<<',';
 
 
     // QTranslator translator;

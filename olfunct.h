@@ -56,14 +56,8 @@ public:
         BigInt x1;
         BigInt y1;
         std::vector<uint32_t>tmod;
-        if(a.size()==1){
-            tmod=a;
-        }
-        else{
-            std::vector<uint32_t>tmu=fun.compute_mu(b);
-            fun.barrett_mod(tmod,b,tmu);
-        }
-        private_e(b,fun.mod(a,b),x1,y1);
+        tmod=mod(a,b);
+        private_e(b,tmod,x1,y1);
         x=y1;
         BigInt tmp;
         tmp.nums=fun.mul(div(a,b),y1.nums);
@@ -85,6 +79,22 @@ public:
         }
         fun.trim(rsu);
         return rsu;
+
+    }
+    std::vector<uint32_t> mod(const std::vector<uint32_t>&a,const std::vector<uint32_t>&b){
+        if(b.size()==1){
+            uint32_t t=b[0];
+            uint64_t remind=0;
+            for(int i=a.size()-1;i>=0;i--){
+                remind=(remind<<32)|a[i];
+                remind%=t;
+            }
+            return std::vector<uint32_t>{(uint32_t)remind};
+        }
+        else{
+            return a;
+        }
+
 
     }
     BigInt sub(const BigInt&a,const BigInt&b){
