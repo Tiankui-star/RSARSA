@@ -567,6 +567,7 @@ RSA_autogen/timestamp: \
 	D:/QTProject/RSA/main.cpp \
 	D:/QTProject/RSA/mainwindow.cpp \
 	D:/QTProject/RSA/mainwindow.h \
+	D:/QTProject/RSA/olfunct.h \
 	D:/QTProject/RSA/primenumber.cpp \
 	D:/QTProject/RSA/primenumber.h \
 	D:/QTProject/RSA/mainwindow.ui \
