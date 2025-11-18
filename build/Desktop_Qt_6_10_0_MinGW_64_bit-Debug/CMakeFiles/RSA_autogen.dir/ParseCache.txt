@@ -377,9 +377,9 @@ D:/QTProject/RSA/mainwindow.h
  mdp:D:/QT/Tools/mingw1310_64/x86_64-w64-mingw32/include/wchar.h
  mdp:D:/QTProject/RSA/build/Desktop_Qt_6_10_0_MinGW_64_bit-Debug/RSA_autogen/moc_predefs.h
  mdp:D:/QTProject/RSA/mainwindow.h
+D:/QTProject/RSA/olfunct.h
+D:/QTProject/RSA/primenumber.cpp
 D:/QTProject/RSA/primenumber.h
 D:/QTProject/RSA/main.cpp
 D:/QTProject/RSA/mainwindow.cpp
  uic:./ui_mainwindow.h
-D:/QTProject/RSA/olfunct.h
-D:/QTProject/RSA/primenumber.cpp

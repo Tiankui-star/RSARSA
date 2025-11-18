@@ -1,6 +1,7 @@
 #ifndef OLFUNCT_H
 #define OLFUNCT_H
 #include<vector>
+#include<iostream>
 #include<cstdint>
 #include"primenumber.h"
 class olfunct {
@@ -16,31 +17,36 @@ public:
         BigInt(std::vector<uint32_t>t):nums(t),flag(1){}
     };
     std::vector<uint32_t>mu;
+    std::vector<uint32_t>mumu;
     std::vector<uint32_t> pube;
     std::vector<uint32_t> olfunction;
     olfunct(PrimeNumer prime):fun(prime){
+        // fun.prime1={952204601,110};
+        // fun.prime2={4511491};
         mu=fun.karatsuba(fun.prime1,fun.prime2);
+        // fun.p1_n_1={952204600,110};
+        // fun.p2_n_1={4511490};
         olfunction=fun.karatsuba(fun.p1_n_1,fun.p2_n_1);
+
+
         pube={17};
-
-
-        //olfunction={27798841};
+        mumu=fun.compute_mu(mu);
     }
     void solve(){
         BigInt x;
         x.flag=1;
         BigInt y;
         y.flag=1;
-        BigInt gcd;
-        gcd.flag=1;
+
         private_e(pube,olfunction,x,y);
-        std::vector<uint32_t> barretmu = fun.compute_mu(x.nums);
+        std::vector<uint32_t> barretmu = fun.compute_mu(olfunction);
         if(x.flag==1){
 
             fun.barrett_mod(x.nums,olfunction,barretmu);
             d=x.nums;
         }
         else{
+
             fun.barrett_mod(x.nums,olfunction,barretmu);
             d=fun.sub(olfunction,x.nums);
         }
