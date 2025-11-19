@@ -4,23 +4,26 @@
 #include <QTranslator>
 #include <QProcess>
 #include <QDebug>
+#include<iostream>
+#include"primenumber.h"
 #include <QCoreApplication>
-
 int main(int argc, char *argv[])
 {
+    //prime=new PrimeNumer();
+    //prime->miller_rabin();
     QApplication a(argc, argv);
-     /* PrimeNumer prime;
-     std::vector<uint32_t> textnum={263356,5959595,126515165,19651561,191119};
+
+
+     /*std::vector<uint32_t> textnum={263356,5959595,126515165,19651561,191119};
      std::cout<<"yuanwen"<<std::endl;
 
 
 
-    // prime.miller_rabin();
+
 
       olfunct test(prime);
       test.solve();
-      for(auto &t:textnum) std::cout<<t<<',';
-      std::cout<<std::endl;
+
       std::cout<<"siyao"<<std::endl;
       for(auto &t:prime.prime1) std::cout<<t<<',';
       std::cout<<std::endl;
@@ -35,6 +38,10 @@ int main(int argc, char *argv[])
       std::vector<uint32_t>rsu=getmod(textnum,test.d,test.mu);;
       for(auto &t:rsu) std::cout<<t<<*/' ';
 
+
+
+
+
     QTranslator translator;
     const QStringList uiLanguages = QLocale::system().uiLanguages();
     for (const QString &locale : uiLanguages) {
@@ -46,7 +53,8 @@ int main(int argc, char *argv[])
     }
     MainWindow w;
     w.show();
-    return a.exec();
+   return a.exec();
+    // return 0;
 
 }
 

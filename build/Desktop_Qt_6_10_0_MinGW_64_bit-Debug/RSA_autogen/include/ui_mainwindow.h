@@ -40,6 +40,7 @@ public:
     QLabel *label;
     QPlainTextEdit *textEdit_input;
     QPushButton *pushButton_getpk;
+    QPushButton *pushButton_getmod;
     QMenuBar *menubar;
     QStatusBar *statusbar;
 
@@ -112,6 +113,11 @@ public:
 
         gridLayout->addWidget(pushButton_getpk, 3, 2, 1, 1);
 
+        pushButton_getmod = new QPushButton(centralwidget);
+        pushButton_getmod->setObjectName("pushButton_getmod");
+
+        gridLayout->addWidget(pushButton_getmod, 3, 3, 1, 2);
+
 
         horizontalLayout->addLayout(gridLayout);
 
@@ -144,6 +150,7 @@ public:
         pushButton_decrypt->setText(QCoreApplication::translate("MainWindow", "\350\247\243\345\257\206", nullptr));
         label->setText(QCoreApplication::translate("MainWindow", "<html><head/><body><p align=\"center\">\350\247\243\345\257\206</p></body></html>", nullptr));
         pushButton_getpk->setText(QCoreApplication::translate("MainWindow", "\346\237\245\347\234\213\347\247\201\351\222\245", nullptr));
+        pushButton_getmod->setText(QCoreApplication::translate("MainWindow", "\346\237\245\347\234\213\346\250\241\346\225\260", nullptr));
     } // retranslateUi
 
 };

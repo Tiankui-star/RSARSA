@@ -2,10 +2,11 @@
 #define OLFUNCT_H
 #include<vector>
 #include<cstdint>
+#include<iostream>
 #include"primenumber.h"
 class olfunct {
 private:
-    PrimeNumer fun;
+    PrimeNumer *fun;
 
 public:
     std::vector<uint32_t>d;
@@ -19,27 +20,31 @@ public:
     std::vector<uint32_t>mumu;
     std::vector<uint32_t> pube;
     std::vector<uint32_t> olfunction;
-    olfunct(PrimeNumer prime):fun(prime){
+    olfunct( PrimeNumer* prime){
         // fun.prime1={952204601,110};
         // fun.prime2={4511491};
 
         // fun.p1_n_1={952204600,110};
         // fun.p2_n_1={4511490};
-        mu=fun.karatsuba(fun.prime1,fun.prime2);
-        olfunction=fun.karatsuba(fun.p1_n_1,fun.p2_n_1);
-
-
-        pube={17};
-        mumu=fun.compute_mu(mu);
-    }
-    void init(PrimeNumer prime){
         fun=prime;
-        mu=fun.karatsuba(fun.prime1,fun.prime2);
-        olfunction=fun.karatsuba(fun.p1_n_1,fun.p2_n_1);
+        mu=fun->karatsuba(fun->prime1,fun->prime2);
+        olfunction=fun->karatsuba(fun->p1_n_1,fun->p2_n_1);
 
 
         pube={17};
-        mumu=fun.compute_mu(mu);
+        mumu=fun->compute_mu(mu);
+    }
+    void init(PrimeNumer* prime){
+        fun=prime;
+        mu=fun->karatsuba(fun->prime1,fun->prime2);
+        olfunction=fun->karatsuba(fun->p1_n_1,fun->p2_n_1);
+        for(auto &t:fun->prime1) std::cout<<t<<' ';
+        std::cout<<std::endl;
+        for(auto &t:fun->prime2) std::cout<<t<<' ';
+        std::cout<<std::endl;
+
+        pube={17};
+        mumu=fun->compute_mu(mu);
     }
     olfunct(){};
     void solve(){
@@ -49,16 +54,16 @@ public:
         y.flag=1;
 
         private_e(pube,olfunction,x,y);
-        std::vector<uint32_t> barretmu = fun.compute_mu(olfunction);
+        std::vector<uint32_t> barretmu = fun->compute_mu(olfunction);
         if(x.flag==1){
 
-            fun.barrett_mod(x.nums,olfunction,barretmu);
+            fun->barrett_mod(x.nums,olfunction,barretmu);
             d=x.nums;
         }
         else{
 
-            fun.barrett_mod(x.nums,olfunction,barretmu);
-            d=fun.sub(olfunction,x.nums);
+            fun->barrett_mod(x.nums,olfunction,barretmu);
+            d=fun->sub(olfunction,x.nums);
         }
     }
     void private_e(const std::vector<uint32_t>&a,const std::vector<uint32_t>&b,BigInt &x,BigInt&y){
@@ -76,14 +81,14 @@ public:
         private_e(b,tmod,x1,y1);
         x=y1;
         BigInt tmp;
-        tmp.nums=fun.mul(div(a,b),y1.nums);
+        tmp.nums=fun->mul(div(a,b),y1.nums);
         tmp.flag=y1.flag;
         y=sub(x1,tmp);
 
     }
 
     std::vector<uint32_t>div(const std::vector<uint32_t>&a,const std::vector<uint32_t>&b){
-        if(fun.compare(a,b)==-1) return {0};
+        if(fun->compare(a,b)==-1) return {0};
         std::vector<uint32_t>rsu=a;
         int n=a.size();
         uint32_t chu=b[0];
@@ -93,7 +98,7 @@ public:
             rsu[i]=tmp/chu;
             carry=tmp%chu;
         }
-        fun.trim(rsu);
+        fun->trim(rsu);
         return rsu;
 
     }
@@ -118,23 +123,23 @@ public:
         BigInt res;
         if(a.flag!=b.flag){
             res.flag=a.flag;
-            res.nums=fun.add(a.nums,b.nums);
+            res.nums=fun->add(a.nums,b.nums);
         }
         else{
-            if(fun.compare(a.nums,b.nums)==0){
+            if(fun->compare(a.nums,b.nums)==0){
                 res.flag=1;
                 res.nums={0};
             }
-            else if(fun.compare(a.nums,b.nums)==1){
+            else if(fun->compare(a.nums,b.nums)==1){
                 res.flag=a.flag;
-                res.nums=fun.sub(a.nums,b.nums);
+                res.nums=fun->sub(a.nums,b.nums);
             }
             else{
                 res.flag=!b.flag;
-                res.nums=fun.sub(b.nums,a.nums);
+                res.nums=fun->sub(b.nums,a.nums);
             }
         }
-        fun.trim(res.nums);
+        fun->trim(res.nums);
         return res;
     }
 

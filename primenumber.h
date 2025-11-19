@@ -2,7 +2,8 @@
 #define PRIMENUMER_H
 #include <vector>
 #include<cstdint>
-class PrimeNumer
+#include<QObject>
+class PrimeNumer :public QObject
 {
 private:
 
@@ -39,10 +40,16 @@ public:
     std::vector<uint32_t> lshift_bits(const std::vector<uint32_t>& v, unsigned s);
     void rshift_bits_inplace(std::vector<uint32_t>& v, unsigned s);
     std::vector<uint32_t> karatsuba_rec(const uint32_t *a, int an, const uint32_t *b, int bn);
+
     static inline void ensure_nonempty_zero(std::vector<uint32_t> &v) {
         if (v.empty()) v.push_back(0);
     }
-    // judge(int i);
+    bool judge(int i){
+        for(int j=2;j<=i/2;j++){
+            if(i%j==0) return false;
+        }
+        return true;
+    }
 
 };
 

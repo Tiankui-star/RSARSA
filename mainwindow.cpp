@@ -9,18 +9,30 @@
 #include<QProcess>
 #include<string>
 #include<QMessageBox>
+#include<QObject>
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
-    ,prime()
 {
     ui->setupUi(this);
 
      ui->plainTextEdit->setReadOnly(true);
     ui->textEdit_output->setReadOnly(true);
-    //prime.miller_rabin();
-    test.init(prime);
-    test.solve();
+    prime=new PrimeNumer();
+    QThread *thread = new QThread(this);
+
+    connect(thread, &QThread::started, [=]() {
+        prime->miller_rabin();
+        QMetaObject::invokeMethod(this, [=]() {
+            test.init(prime);
+            test.solve();
+            QMessageBox::information(this, "完成", "大素数生成和初始化完成！");
+        });
+    });
+
+    connect(thread, &QThread::finished, thread, &QObject::deleteLater);
+
+    thread->start();
 }
 
 MainWindow::~MainWindow()
@@ -74,6 +86,15 @@ void MainWindow::on_pushButton_getpk_clicked(){
     }
     privatekey.removeLast();
     QMessageBox::information(nullptr,"私钥为：",privatekey);
+}
+void MainWindow::on_pushButton_getmod_clicked(){
+    QString mod;
+    for(auto &t:test.mu){
+        mod.append(std::to_string(t));
+        mod.append(',');
+    }
+    mod.removeLast();
+    QMessageBox::information(nullptr,"模数为：",mod);
 }
 std::vector<uint32_t> MainWindow::getmod(std::vector<uint32_t>&base,std::vector<uint32_t>&exp,std::vector<uint32_t>&mod){
     QProcess process;
