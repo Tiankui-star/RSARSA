@@ -7,6 +7,8 @@
 #include<vector>
 #include<QChar>
 #include<QProcess>
+#include<string>
+#include<QMessageBox>
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -14,10 +16,11 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
-    // 设置输出框为只读（根据实际组件名修改）
-
-     ui->plainTextEdit->setReadOnly(true);  // 如果是QPlainTextEdit且未重命名
+     ui->plainTextEdit->setReadOnly(true);
+    ui->textEdit_output->setReadOnly(true);
     //prime.miller_rabin();
+    test.init(prime);
+    test.solve();
 }
 
 MainWindow::~MainWindow()
@@ -27,25 +30,20 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_pushButton_encrypt_clicked()
 {
-    // 根据实际组件名获取输入
-    QString inputText = ui->textEdit_input->toPlainText();  // 如果是QTextEdit
+    QString inputText = ui->textEdit_input->toPlainText();
 
 
     if(inputText.isEmpty()) {
         QMessageBox::warning(this, "警告", "请输入要加密的文本!");
         return;
     }
-    //qDebug()<<inputText.size();
-    // 调用加密函数
     std::vector<uint32_t> encryptedText = encryptText(inputText);
-
-    // 根据实际组件名设置输出
     QStringList decList;
     for (uint32_t value : encryptedText) {
-        decList.append(QString::number(value));  // 直接转换为十进制字符串
+        decList.append(QString::number(value));
         decList.append(QString(','));
     }
-
+    decList.removeLast();
     ui->textEdit_output->setPlainText(decList.join(" "));
 }
 
@@ -62,11 +60,20 @@ void MainWindow::on_pushButton_decrypt_clicked()
 
     QStringList decList;
     for (uint32_t value : decryptedText) {
-        decList.append(QString::number(value));  // 直接转换为十进制字符串
+        decList.append(QString::number(value));
         decList.append(QString(','));
     }
-
+    decList.removeLast();
     ui->plainTextEdit->setPlainText(decList.join(" "));
+}
+void MainWindow::on_pushButton_getpk_clicked(){
+    QString privatekey;
+    for(auto &t:test.d){
+        privatekey.append(std::to_string(t));
+        privatekey.append(',');
+    }
+    privatekey.removeLast();
+    QMessageBox::information(nullptr,"私钥为：",privatekey);
 }
 std::vector<uint32_t> MainWindow::getmod(std::vector<uint32_t>&base,std::vector<uint32_t>&exp,std::vector<uint32_t>&mod){
     QProcess process;
@@ -116,7 +123,7 @@ std::vector<uint32_t> MainWindow::getmod(std::vector<uint32_t>&base,std::vector<
 }
 std::vector<uint32_t> MainWindow::encryptText(const QString &plainText)
 {
-    // 这里实现加密逻辑
+
     std::vector<uint32_t>plain;
     int i=0;
     for(;i<plainText.size();i++){
@@ -127,7 +134,6 @@ std::vector<uint32_t> MainWindow::encryptText(const QString &plainText)
         }
         plain.push_back(val);
     }
-    olfunct test(prime);
 
     std::vector<uint32_t> secret=getmod(plain,test.pube,test.mu);
     return secret;
@@ -138,19 +144,18 @@ std::vector<uint32_t> MainWindow::encryptText(const QString &plainText)
 
 std::vector<uint32_t> MainWindow::decryptText(const QString &cipherText)
 {
-    // 这里实现解密逻辑
-    qDebug()<<cipherText[1];
-    olfunct test(prime);
     std::vector<uint32_t>cplain;
     int i=0;
     for(;i<cipherText.size();i++){
         uint32_t val=0;
-        while(i<cipherText.size()&&cipherText[i]!=','){
+        while(i<cipherText.size()&&cipherText[i].isDigit()){
+
             val=val*10+(cipherText[i].digitValue());
             i++;
         }
-        cplain.push_back(val);
-        qDebug()<<val<<' ';
+        if(val>0){
+            cplain.push_back(val);
+        }
     }
 
     std::vector<uint32_t>rsu=getmod(cplain,test.d,test.mu);

@@ -21,14 +21,15 @@ public:
 private slots:
     void on_pushButton_encrypt_clicked();
     void on_pushButton_decrypt_clicked();
-
+    void on_pushButton_getpk_clicked();
 
 private:
     Ui::MainWindow *ui;
  PrimeNumer prime;
-    // 你的业务函数
+    olfunct test;
     std::vector<uint32_t> getmod(std::vector<uint32_t>&base,std::vector<uint32_t>&exp,std::vector<uint32_t>&mod);
     std::vector<uint32_t>  encryptText(const QString &plainText);
     std::vector<uint32_t> decryptText(const QString &cipherText);
+    std::vector<uint32_t>getpk();
 };
 #endif

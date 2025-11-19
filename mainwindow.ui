@@ -26,6 +26,12 @@
       <property name="verticalSpacing">
        <number>7</number>
       </property>
+      <item row="2" column="3" colspan="2">
+       <widget class="QPlainTextEdit" name="plainTextEdit"/>
+      </item>
+      <item row="2" column="1">
+       <widget class="QPlainTextEdit" name="textEdit_output"/>
+      </item>
       <item row="1" column="0">
        <widget class="QLabel" name="label_2">
         <property name="text">
@@ -40,21 +46,22 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="3" colspan="2">
-       <widget class="QLabel" name="label">
+      <item row="1" column="1">
+       <widget class="QLabel" name="label_3">
         <property name="text">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;解密&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;密文输出&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
        </widget>
       </item>
-      <item row="2" column="3" colspan="2">
-       <widget class="QPlainTextEdit" name="plainTextEdit"/>
+      <item row="2" column="2">
+       <widget class="QPlainTextEdit" name="inputText"/>
       </item>
-      <item row="2" column="1">
-       <widget class="QPlainTextEdit" name="textEdit_output"/>
-      </item>
-      <item row="2" column="0">
-       <widget class="QPlainTextEdit" name="textEdit_input"/>
+      <item row="0" column="0" colspan="2">
+       <widget class="QPushButton" name="pushButton_encrypt">
+        <property name="text">
+         <string>加密</string>
+        </property>
+       </widget>
       </item>
       <item row="0" column="2" colspan="3">
        <widget class="QPushButton" name="pushButton_decrypt">
@@ -63,20 +70,20 @@
         </property>
        </widget>
       </item>
-      <item row="2" column="2">
-       <widget class="QPlainTextEdit" name="inputText"/>
-      </item>
-      <item row="1" column="1">
-       <widget class="QLabel" name="label_3">
+      <item row="1" column="3" colspan="2">
+       <widget class="QLabel" name="label">
         <property name="text">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;密文输出&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;解密&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
        </widget>
       </item>
-      <item row="0" column="0" colspan="2">
-       <widget class="QPushButton" name="pushButton_encrypt">
+      <item row="2" column="0">
+       <widget class="QPlainTextEdit" name="textEdit_input"/>
+      </item>
+      <item row="3" column="2">
+       <widget class="QPushButton" name="pushButton_getpk">
         <property name="text">
-         <string>加密</string>
+         <string>查看私钥</string>
         </property>
        </widget>
       </item>

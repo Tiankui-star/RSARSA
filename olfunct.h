@@ -1,7 +1,6 @@
 #ifndef OLFUNCT_H
 #define OLFUNCT_H
 #include<vector>
-#include<iostream>
 #include<cstdint>
 #include"primenumber.h"
 class olfunct {
@@ -23,15 +22,26 @@ public:
     olfunct(PrimeNumer prime):fun(prime){
         // fun.prime1={952204601,110};
         // fun.prime2={4511491};
-        mu=fun.karatsuba(fun.prime1,fun.prime2);
+
         // fun.p1_n_1={952204600,110};
         // fun.p2_n_1={4511490};
+        mu=fun.karatsuba(fun.prime1,fun.prime2);
         olfunction=fun.karatsuba(fun.p1_n_1,fun.p2_n_1);
 
 
         pube={17};
         mumu=fun.compute_mu(mu);
     }
+    void init(PrimeNumer prime){
+        fun=prime;
+        mu=fun.karatsuba(fun.prime1,fun.prime2);
+        olfunction=fun.karatsuba(fun.p1_n_1,fun.p2_n_1);
+
+
+        pube={17};
+        mumu=fun.compute_mu(mu);
+    }
+    olfunct(){};
     void solve(){
         BigInt x;
         x.flag=1;

@@ -29,16 +29,17 @@ public:
     QWidget *centralwidget;
     QHBoxLayout *horizontalLayout;
     QGridLayout *gridLayout;
-    QLabel *label_2;
-    QLabel *label_4;
-    QLabel *label;
     QPlainTextEdit *plainTextEdit;
     QPlainTextEdit *textEdit_output;
-    QPlainTextEdit *textEdit_input;
-    QPushButton *pushButton_decrypt;
-    QPlainTextEdit *inputText;
+    QLabel *label_2;
+    QLabel *label_4;
     QLabel *label_3;
+    QPlainTextEdit *inputText;
     QPushButton *pushButton_encrypt;
+    QPushButton *pushButton_decrypt;
+    QLabel *label;
+    QPlainTextEdit *textEdit_input;
+    QPushButton *pushButton_getpk;
     QMenuBar *menubar;
     QStatusBar *statusbar;
 
@@ -56,21 +57,6 @@ public:
         gridLayout->setSizeConstraint(QLayout::SizeConstraint::SetNoConstraint);
         gridLayout->setHorizontalSpacing(0);
         gridLayout->setVerticalSpacing(7);
-        label_2 = new QLabel(centralwidget);
-        label_2->setObjectName("label_2");
-
-        gridLayout->addWidget(label_2, 1, 0, 1, 1);
-
-        label_4 = new QLabel(centralwidget);
-        label_4->setObjectName("label_4");
-
-        gridLayout->addWidget(label_4, 1, 2, 1, 1);
-
-        label = new QLabel(centralwidget);
-        label->setObjectName("label");
-
-        gridLayout->addWidget(label, 1, 3, 1, 2);
-
         plainTextEdit = new QPlainTextEdit(centralwidget);
         plainTextEdit->setObjectName("plainTextEdit");
 
@@ -81,30 +67,50 @@ public:
 
         gridLayout->addWidget(textEdit_output, 2, 1, 1, 1);
 
-        textEdit_input = new QPlainTextEdit(centralwidget);
-        textEdit_input->setObjectName("textEdit_input");
+        label_2 = new QLabel(centralwidget);
+        label_2->setObjectName("label_2");
 
-        gridLayout->addWidget(textEdit_input, 2, 0, 1, 1);
+        gridLayout->addWidget(label_2, 1, 0, 1, 1);
 
-        pushButton_decrypt = new QPushButton(centralwidget);
-        pushButton_decrypt->setObjectName("pushButton_decrypt");
+        label_4 = new QLabel(centralwidget);
+        label_4->setObjectName("label_4");
 
-        gridLayout->addWidget(pushButton_decrypt, 0, 2, 1, 3);
-
-        inputText = new QPlainTextEdit(centralwidget);
-        inputText->setObjectName("inputText");
-
-        gridLayout->addWidget(inputText, 2, 2, 1, 1);
+        gridLayout->addWidget(label_4, 1, 2, 1, 1);
 
         label_3 = new QLabel(centralwidget);
         label_3->setObjectName("label_3");
 
         gridLayout->addWidget(label_3, 1, 1, 1, 1);
 
+        inputText = new QPlainTextEdit(centralwidget);
+        inputText->setObjectName("inputText");
+
+        gridLayout->addWidget(inputText, 2, 2, 1, 1);
+
         pushButton_encrypt = new QPushButton(centralwidget);
         pushButton_encrypt->setObjectName("pushButton_encrypt");
 
         gridLayout->addWidget(pushButton_encrypt, 0, 0, 1, 2);
+
+        pushButton_decrypt = new QPushButton(centralwidget);
+        pushButton_decrypt->setObjectName("pushButton_decrypt");
+
+        gridLayout->addWidget(pushButton_decrypt, 0, 2, 1, 3);
+
+        label = new QLabel(centralwidget);
+        label->setObjectName("label");
+
+        gridLayout->addWidget(label, 1, 3, 1, 2);
+
+        textEdit_input = new QPlainTextEdit(centralwidget);
+        textEdit_input->setObjectName("textEdit_input");
+
+        gridLayout->addWidget(textEdit_input, 2, 0, 1, 1);
+
+        pushButton_getpk = new QPushButton(centralwidget);
+        pushButton_getpk->setObjectName("pushButton_getpk");
+
+        gridLayout->addWidget(pushButton_getpk, 3, 2, 1, 1);
 
 
         horizontalLayout->addLayout(gridLayout);
@@ -133,10 +139,11 @@ public:
         MainWindow->setWindowTitle(QCoreApplication::translate("MainWindow", "MainWindow", nullptr));
         label_2->setText(QCoreApplication::translate("MainWindow", "<html><head/><body><p align=\"center\">    \346\230\216\346\226\207</p></body></html>", nullptr));
         label_4->setText(QCoreApplication::translate("MainWindow", "<html><head/><body><p align=\"center\">\345\257\206\346\226\207\350\276\223\345\205\245</p></body></html>", nullptr));
-        label->setText(QCoreApplication::translate("MainWindow", "<html><head/><body><p align=\"center\">\350\247\243\345\257\206</p></body></html>", nullptr));
-        pushButton_decrypt->setText(QCoreApplication::translate("MainWindow", "\350\247\243\345\257\206", nullptr));
         label_3->setText(QCoreApplication::translate("MainWindow", "<html><head/><body><p align=\"center\">\345\257\206\346\226\207\350\276\223\345\207\272</p></body></html>", nullptr));
         pushButton_encrypt->setText(QCoreApplication::translate("MainWindow", "\345\212\240\345\257\206", nullptr));
+        pushButton_decrypt->setText(QCoreApplication::translate("MainWindow", "\350\247\243\345\257\206", nullptr));
+        label->setText(QCoreApplication::translate("MainWindow", "<html><head/><body><p align=\"center\">\350\247\243\345\257\206</p></body></html>", nullptr));
+        pushButton_getpk->setText(QCoreApplication::translate("MainWindow", "\346\237\245\347\234\213\347\247\201\351\222\245", nullptr));
     } // retranslateUi
 
 };
