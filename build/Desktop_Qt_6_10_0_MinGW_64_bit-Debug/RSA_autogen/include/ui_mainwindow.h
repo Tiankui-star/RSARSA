@@ -11,11 +11,14 @@
 
 #include <QtCore/QVariant>
 #include <QtWidgets/QApplication>
+#include <QtWidgets/QGridLayout>
+#include <QtWidgets/QHBoxLayout>
+#include <QtWidgets/QLabel>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QMenuBar>
+#include <QtWidgets/QPlainTextEdit>
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QStatusBar>
-#include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QWidget>
 
 QT_BEGIN_NAMESPACE
@@ -24,9 +27,18 @@ class Ui_MainWindow
 {
 public:
     QWidget *centralwidget;
-    QWidget *verticalLayoutWidget;
-    QVBoxLayout *verticalLayout;
-    QPushButton *pushButton;
+    QHBoxLayout *horizontalLayout;
+    QGridLayout *gridLayout;
+    QLabel *label_2;
+    QLabel *label_4;
+    QLabel *label;
+    QPlainTextEdit *plainTextEdit;
+    QPlainTextEdit *textEdit_output;
+    QPlainTextEdit *textEdit_input;
+    QPushButton *pushButton_decrypt;
+    QPlainTextEdit *inputText;
+    QLabel *label_3;
+    QPushButton *pushButton_encrypt;
     QMenuBar *menubar;
     QStatusBar *statusbar;
 
@@ -34,28 +46,82 @@ public:
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName("MainWindow");
-        MainWindow->resize(800, 600);
+        MainWindow->resize(940, 457);
         centralwidget = new QWidget(MainWindow);
         centralwidget->setObjectName("centralwidget");
-        verticalLayoutWidget = new QWidget(centralwidget);
-        verticalLayoutWidget->setObjectName("verticalLayoutWidget");
-        verticalLayoutWidget->setGeometry(QRect(280, 300, 160, 121));
-        verticalLayout = new QVBoxLayout(verticalLayoutWidget);
-        verticalLayout->setObjectName("verticalLayout");
-        verticalLayout->setContentsMargins(0, 0, 0, 0);
-        pushButton = new QPushButton(verticalLayoutWidget);
-        pushButton->setObjectName("pushButton");
+        horizontalLayout = new QHBoxLayout(centralwidget);
+        horizontalLayout->setObjectName("horizontalLayout");
+        gridLayout = new QGridLayout();
+        gridLayout->setObjectName("gridLayout");
+        gridLayout->setSizeConstraint(QLayout::SizeConstraint::SetNoConstraint);
+        gridLayout->setHorizontalSpacing(0);
+        gridLayout->setVerticalSpacing(7);
+        label_2 = new QLabel(centralwidget);
+        label_2->setObjectName("label_2");
 
-        verticalLayout->addWidget(pushButton);
+        gridLayout->addWidget(label_2, 1, 0, 1, 1);
+
+        label_4 = new QLabel(centralwidget);
+        label_4->setObjectName("label_4");
+
+        gridLayout->addWidget(label_4, 1, 2, 1, 1);
+
+        label = new QLabel(centralwidget);
+        label->setObjectName("label");
+
+        gridLayout->addWidget(label, 1, 3, 1, 2);
+
+        plainTextEdit = new QPlainTextEdit(centralwidget);
+        plainTextEdit->setObjectName("plainTextEdit");
+
+        gridLayout->addWidget(plainTextEdit, 2, 3, 1, 2);
+
+        textEdit_output = new QPlainTextEdit(centralwidget);
+        textEdit_output->setObjectName("textEdit_output");
+
+        gridLayout->addWidget(textEdit_output, 2, 1, 1, 1);
+
+        textEdit_input = new QPlainTextEdit(centralwidget);
+        textEdit_input->setObjectName("textEdit_input");
+
+        gridLayout->addWidget(textEdit_input, 2, 0, 1, 1);
+
+        pushButton_decrypt = new QPushButton(centralwidget);
+        pushButton_decrypt->setObjectName("pushButton_decrypt");
+
+        gridLayout->addWidget(pushButton_decrypt, 0, 2, 1, 3);
+
+        inputText = new QPlainTextEdit(centralwidget);
+        inputText->setObjectName("inputText");
+
+        gridLayout->addWidget(inputText, 2, 2, 1, 1);
+
+        label_3 = new QLabel(centralwidget);
+        label_3->setObjectName("label_3");
+
+        gridLayout->addWidget(label_3, 1, 1, 1, 1);
+
+        pushButton_encrypt = new QPushButton(centralwidget);
+        pushButton_encrypt->setObjectName("pushButton_encrypt");
+
+        gridLayout->addWidget(pushButton_encrypt, 0, 0, 1, 2);
+
+
+        horizontalLayout->addLayout(gridLayout);
 
         MainWindow->setCentralWidget(centralwidget);
         menubar = new QMenuBar(MainWindow);
         menubar->setObjectName("menubar");
-        menubar->setGeometry(QRect(0, 0, 800, 25));
+        menubar->setGeometry(QRect(0, 0, 940, 25));
         MainWindow->setMenuBar(menubar);
         statusbar = new QStatusBar(MainWindow);
         statusbar->setObjectName("statusbar");
         MainWindow->setStatusBar(statusbar);
+        QWidget::setTabOrder(textEdit_input, plainTextEdit);
+        QWidget::setTabOrder(plainTextEdit, textEdit_output);
+        QWidget::setTabOrder(textEdit_output, pushButton_decrypt);
+        QWidget::setTabOrder(pushButton_decrypt, pushButton_encrypt);
+        QWidget::setTabOrder(pushButton_encrypt, inputText);
 
         retranslateUi(MainWindow);
 
@@ -65,7 +131,12 @@ public:
     void retranslateUi(QMainWindow *MainWindow)
     {
         MainWindow->setWindowTitle(QCoreApplication::translate("MainWindow", "MainWindow", nullptr));
-        pushButton->setText(QCoreApplication::translate("MainWindow", "\351\200\211\346\213\251\344\275\240\347\232\204\345\212\237\350\203\275", nullptr));
+        label_2->setText(QCoreApplication::translate("MainWindow", "<html><head/><body><p align=\"center\">    \346\230\216\346\226\207</p></body></html>", nullptr));
+        label_4->setText(QCoreApplication::translate("MainWindow", "<html><head/><body><p align=\"center\">\345\257\206\346\226\207\350\276\223\345\205\245</p></body></html>", nullptr));
+        label->setText(QCoreApplication::translate("MainWindow", "<html><head/><body><p align=\"center\">\350\247\243\345\257\206</p></body></html>", nullptr));
+        pushButton_decrypt->setText(QCoreApplication::translate("MainWindow", "\350\247\243\345\257\206", nullptr));
+        label_3->setText(QCoreApplication::translate("MainWindow", "<html><head/><body><p align=\"center\">\345\257\206\346\226\207\350\276\223\345\207\272</p></body></html>", nullptr));
+        pushButton_encrypt->setText(QCoreApplication::translate("MainWindow", "\345\212\240\345\257\206", nullptr));
     } // retranslateUi
 
 };
